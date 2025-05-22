@@ -17,8 +17,7 @@ class NowPlayingTrack {
   static final _essentialRegExp = RegExp(r'\(.*\)|\[.*\]');
 
   static final _images = _LruMap<String, ImageProvider?>(size: 3);
-  static final _resolutionStates =
-      _LruMap<String, _NowPlayingImageResolutionState?>(size: 3);
+  static final _resolutionStates = _LruMap<String, _NowPlayingImageResolutionState?>(size: 3);
   static final _icons = _LruMap<String?, ImageProvider>();
 
   final String id;
@@ -53,10 +52,8 @@ class NowPlayingTrack {
 
   /// An image representing the app playing the track
   ImageProvider? get icon {
-    if (isIOS)
-      return const AssetImage('assets/applemusic.png', package: 'nowplaying');
-    if (source == 'com.acmeandroid.listen')
-      return const AssetImage('assets/listenapp.png', package: 'nowplaying');
+    if (isIOS) return const AssetImage('assets/applemusic.png', package: 'nowplaying');
+    if (source == 'com.acmeandroid.listen') return const AssetImage('assets/listenapp.png', package: 'nowplaying');
     return _icons[this.source];
   }
 
@@ -67,21 +64,16 @@ class NowPlayingTrack {
   bool get hasImage => image != null;
 
   /// true if the image is being resolved, else false
-  bool get isResolvingImage =>
-      _resolutionState == _NowPlayingImageResolutionState.resolving;
+  bool get isResolvingImage => _resolutionState == _NowPlayingImageResolutionState.resolving;
 
   /// true if the image is empty and a resolution hasn't been attempted, else false
-  bool get imageNeedsResolving =>
-      _resolutionState == _NowPlayingImageResolutionState.unresolved;
+  bool get imageNeedsResolving => _resolutionState == _NowPlayingImageResolutionState.unresolved;
 
   String get _imageId => '$artist:$album';
 
   @override
   operator ==(other) =>
-      other is NowPlayingTrack &&
-      other.id == this.id &&
-      other.progress == this.progress &&
-      other.state == this.state;
+      other is NowPlayingTrack && other.id == this.id && other.progress == this.progress && other.state == this.state;
 
   /// The image for the track, probably album art
   ///
@@ -90,10 +82,8 @@ class NowPlayingTrack {
   ImageProvider? get image => _images[_imageId];
   set image(ImageProvider? image) => _images[_imageId] = image;
 
-  _NowPlayingImageResolutionState? get _resolutionState =>
-      _resolutionStates[_imageId];
-  set _resolutionState(_NowPlayingImageResolutionState? state) =>
-      _resolutionStates[_imageId] = state;
+  _NowPlayingImageResolutionState? get _resolutionState => _resolutionStates[_imageId];
+  set _resolutionState(_NowPlayingImageResolutionState? state) => _resolutionStates[_imageId] = state;
 
   NowPlayingTrack({
     String? id,
@@ -183,7 +173,7 @@ class NowPlayingTrack {
   Future<void> resolveImage() async {
     if (imageNeedsResolving && !hasImage) {
       _resolutionState = _NowPlayingImageResolutionState.resolving;
-      this.image = await NowPlaying.instance.resolver.resolve(this);
+      this.image = await NowPlaying.instance.resolver?.resolve(this);
       _resolutionState = _NowPlayingImageResolutionState.resolved;
     }
   }

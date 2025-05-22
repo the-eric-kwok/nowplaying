@@ -62,14 +62,12 @@ class NowPlaying with WidgetsBindingObserver {
     _controller.add(track);
 
     this._resolveImages = resolver != null || resolveImages;
-    this.resolver =
-        resolver ?? (_resolveImages ? DefaultNowPlayingImageResolver() : null);
+    this.resolver = resolver ?? (_resolveImages ? DefaultNowPlayingImageResolver() : null);
 
     final prefs = await SharedPreferences.getInstance();
     NowPlaying.spotify.setPrefs(prefs);
     if (spotifyClientId is String && spotifyClientSecret is String) {
-      NowPlaying.spotify.setCredentials(
-          clientId: spotifyClientId, clientSecret: spotifyClientSecret);
+      NowPlaying.spotify.setCredentials(clientId: spotifyClientId, clientSecret: spotifyClientSecret);
     }
 
     _bindToWidgetsBinding();
@@ -111,26 +109,21 @@ class NowPlaying with WidgetsBindingObserver {
     _controller.add(this.track);
   }
 
-  /// Returns true is the service has permission granted by the systme and user
+  /// Returns true if the service has permission granted by the system and user
   Future<bool> isEnabled() async {
-    return isIOS || (await _channel.invokeMethod<bool>('isEnabled') ?? false);
+    return await _channel.invokeMethod<bool>('isEnabled') ?? false;
   }
 
   /// Opens an OS settings page
   ///
   /// Returns true if:
-  ///   - OS is iOS, or
-  ///   - permission has already been given, or
-  ///   - the settings screen has not been opened by this app before, or
-  ///   - opening the screen this time is `force`d
+  ///   - parameter [force] is true, or
+  ///   - the settings screen has not been opened by this app before
   ///
   /// Returns false if:
-  ///   - OS is Android, and
-  ///   - permission has not been given by the user, and
+  ///   - parameter [force] is false, and
   ///   - the settings screen has been opened by this app before
   Future<bool> requestPermissions({bool force = false}) async {
-    if (isIOS) return true;
-
     final directory = await getApplicationDocumentsDirectory();
     final file = File('${directory.path}/com.gomes.nowplaying');
     if (!force && await file.exists()) return false;
